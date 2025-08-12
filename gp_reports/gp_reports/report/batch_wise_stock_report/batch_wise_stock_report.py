@@ -183,7 +183,7 @@ def get_data(filters):
     WHERE
         sle.is_cancelled = 0
         {conditions_second}
-    GROUP BY sle.batch_no
+    GROUP BY sle.item_code
     """
 
     stock_balance_result = frappe.db.sql(stock_balance_query, filters, as_dict=1)
