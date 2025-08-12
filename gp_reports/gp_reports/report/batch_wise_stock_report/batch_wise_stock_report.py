@@ -14,8 +14,7 @@ def get_columns():
         {
             "label": _("Item"),
             "fieldname": "item_code",
-            "fieldtype": "Link",
-            "options": "Item",
+            "fieldtype": "Data",
             "width": 100,
         },
         
@@ -27,9 +26,8 @@ def get_columns():
          },
          {
             "label": _("Batch"),
-            "fieldname": "batch_id",
-            "fieldtype": "Link",
-            "options": "Batch",
+            "fieldname": "batch_no",
+            "fieldtype": "Data",
             "width": 100
         },
         {
@@ -129,8 +127,6 @@ def get_columns():
 
 def get_conditions_first(filters):
     conditions = []
-    if filters.get("batch_no"):
-        conditions.append(f"AND sii.batch_no = %(batch_no)s")
     if filters.get("item_code"):
         conditions.append(f"AND sii.item_code = %(item_code)s")
     return " ".join(conditions)
@@ -138,8 +134,6 @@ def get_conditions_first(filters):
 
 def get_conditions_second(filters):
     conditions = []
-    if filters.get("batch_no"):
-        conditions.append(f"AND sle.batch_no = %(batch_no)s")
     if filters.get("item_code"):
         conditions.append(f"AND sle.item_code = %(item_code)s")
     return " ".join(conditions)
@@ -170,7 +164,7 @@ def get_data(filters):
     SELECT 
         sle.item_code,
         sle.warehouse,
-        batch.batch_id,
+        sle.batch_no,
         sle.valuation_rate,
         sle.incoming_rate,
         SUM(CASE WHEN sle.posting_date >= '{filters.get('from_date')}' AND  sle.posting_date <= '{filters.get('to_date')}' AND sle.voucher_type = 'Purchase Receipt' AND sle.actual_qty > 0 THEN sle.actual_qty ELSE 0 END) AS in_qty,
@@ -185,13 +179,11 @@ def get_data(filters):
          ((((SUM(CASE WHEN sle.posting_date >= '{filters.get('from_date')}' AND  sle.posting_date <= '{filters.get('to_date')}' AND sle.voucher_type = 'Purchase Receipt' AND sle.actual_qty > 0 THEN sle.actual_qty ELSE 0 END) + SUM(CASE WHEN sle.posting_date < '{filters.get('from_date')}' THEN sle.actual_qty ELSE 0 END)) + SUM(CASE WHEN sle.posting_date >= '{filters.get('from_date')}' AND  sle.posting_date <= '{filters.get('to_date')}' AND sle.voucher_type = 'Delivery Note' AND sle.actual_qty > 0 THEN sle.actual_qty ELSE 0 END))-ABS(SUM(CASE WHEN sle.posting_date >= '{filters.get('from_date')}' AND  sle.posting_date <= '{filters.get('to_date')}' AND sle.voucher_type = 'Delivery Note' AND sle.actual_qty < 0 THEN sle.actual_qty ELSE 0 END)))*sle.valuation_rate) AS balance_value
         
          
-    FROM `tabStock Ledger Entry` AS sle, `tabItem` AS item, `tabBatch` AS batch
+    FROM `tabStock Ledger Entry` AS sle
     WHERE
         sle.is_cancelled = 0
-        AND item.name = sle.item_code
-        AND batch.batch_id = sle.batch_no
         {conditions_second}
-    GROUP BY sle.item_code
+    GROUP BY sle.batch_no
     """
 
     stock_balance_result = frappe.db.sql(stock_balance_query, filters, as_dict=1)
