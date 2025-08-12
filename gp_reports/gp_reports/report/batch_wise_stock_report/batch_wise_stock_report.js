@@ -62,4 +62,3 @@ frappe.query_reports["Batch Wise Stock Report"] = {
 	}
 };
 
-erpnext.utils.add_inventory_dimensions('Stock Balance', 8);

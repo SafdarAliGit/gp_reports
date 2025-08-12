@@ -1,4 +1,3 @@
-from decimal import Decimal
 
 import frappe
 from frappe import _
