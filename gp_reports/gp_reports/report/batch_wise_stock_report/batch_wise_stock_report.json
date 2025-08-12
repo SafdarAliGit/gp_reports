@@ -12,12 +12,12 @@
  "modified": "2024-03-23 22:08:43.517688",
  "modified_by": "Administrator",
  "module": "GP Reports",
- "name": "Sales Stock And Return",
+ "name": "Batch Wise Stock Report",
  "owner": "Administrator",
  "prepared_report": 1,
  "query": "",
  "ref_doctype": "Stock Ledger Entry",
- "report_name": "Sales Stock And Return",
+ "report_name": "Batch Wise Stock Report",
  "report_type": "Script Report",
  "roles": [
   {

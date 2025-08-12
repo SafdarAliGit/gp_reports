@@ -108,6 +108,20 @@ def get_columns():
             "fieldtype": "Currency",
             "width": 120
 
+        },
+        {
+            "label": _("Stock Shortage"),
+            "fieldname": "stock_shortage",
+            "fieldtype": "Float",
+            "width": 100
+
+        },
+        {
+            "label": _("Shortage AMT."),
+            "fieldname": "shortage_amount",
+            "fieldtype": "Currency",
+            "options": "currency",
+            "width": 120
         }
     ]
 
@@ -162,6 +176,8 @@ def get_data(filters):
         sle.incoming_rate,
         SUM(CASE WHEN sle.posting_date >= '{filters.get('from_date')}' AND  sle.posting_date <= '{filters.get('to_date')}' AND sle.voucher_type = 'Purchase Receipt' AND sle.actual_qty > 0 THEN sle.actual_qty ELSE 0 END) AS in_qty,
         SUM(CASE WHEN sle.posting_date < '{filters.get('from_date')}' THEN sle.actual_qty ELSE 0 END) AS opening_qty,
+        SUM(CASE WHEN sle.posting_date < '{filters.get('from_date')}' AND sle.voucher_type = "Stock Entry" AND sle.actual_qty < 0 THEN sle.actual_qty ELSE 0 END) AS stock_shortage,
+        ABS(SUM(CASE WHEN sle.posting_date < '{filters.get('from_date')}' AND sle.voucher_type = "Stock Entry" AND sle.actual_qty < 0 THEN sle.actual_qty ELSE 0 END)*sle.valuation_rate) AS shortage_amount,
         SUM(CASE WHEN sle.posting_date >= '{filters.get('from_date')}' AND  sle.posting_date <= '{filters.get('to_date')}' AND sle.voucher_type = 'Purchase Receipt' AND sle.actual_qty > 0 THEN sle.actual_qty ELSE 0 END)*sle.incoming_rate AS in_amount,
         SUM(CASE WHEN sle.posting_date < '{filters.get('from_date')}' THEN sle.actual_qty ELSE 0 END)*sle.valuation_rate AS opening_amount,
         ABS(SUM(CASE WHEN sle.posting_date >= '{filters.get('from_date')}' AND  sle.posting_date <= '{filters.get('to_date')}' AND sle.voucher_type = 'Delivery Note' AND sle.actual_qty < 0 THEN sle.actual_qty ELSE 0 END)) AS out_qty,

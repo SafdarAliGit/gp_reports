@@ -1,6 +1,6 @@
 
 
-frappe.query_reports["Sales Stock And Return"] = {
+frappe.query_reports["Batch Wise Stock Report"] = {
 	"filters": [
 		{
 			"fieldname": "company",
