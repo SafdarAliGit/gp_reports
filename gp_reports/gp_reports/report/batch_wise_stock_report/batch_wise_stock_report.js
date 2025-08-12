@@ -48,17 +48,17 @@ frappe.query_reports["Batch Wise Stock Report"] = {
 
 	],
 
-	"formatter": function (value, row, column, data, default_formatter) {
-		value = default_formatter(value, row, column, data);
+	// "formatter": function (value, row, column, data, default_formatter) {
+	// 	value = default_formatter(value, row, column, data);
 
-		if (column.fieldname == "out_qty" && data && data.out_qty > 0) {
-			value = "<span style='color:red'>" + value + "</span>";
-		}
-		else if (column.fieldname == "in_qty" && data && data.in_qty > 0) {
-			value = "<span style='color:green'>" + value + "</span>";
-		}
+	// 	if (column.fieldname == "out_qty" && data && data.out_qty > 0) {
+	// 		value = "<span style='color:red'>" + value + "</span>";
+	// 	}
+	// 	else if (column.fieldname == "in_qty" && data && data.in_qty > 0) {
+	// 		value = "<span style='color:green'>" + value + "</span>";
+	// 	}
 
-		return value;
-	}
+	// 	return value;
+	// }
 };
 
